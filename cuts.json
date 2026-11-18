@@ -1,0 +1,156 @@
+{
+  "videos": "C:\\Users\\guilh\\Documents\\Editor-IA\\KTM-250\\videos",
+  "duration": 60,
+  "music": {
+    "file": "local/music.wav",
+    "in": 0,
+    "volume": 0.55,
+    "beats": []
+  },
+  "engine": [
+    {
+      "file": "local/engine.wav",
+      "in": 0,
+      "at": 0,
+      "duration": 6,
+      "volume": 0.65
+    }
+  ],
+  "cuts": [
+    {
+      "file": "DJI_0046.MP4",
+      "in": 0,
+      "at": 0,
+      "dissolveFrames": 0,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    },
+    {
+      "file": "DJI_0048.MP4",
+      "in": 0,
+      "at": 7,
+      "dissolveFrames": 12,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    },
+    {
+      "file": "DJI_0049.MP4",
+      "in": 0,
+      "at": 14,
+      "dissolveFrames": 0,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    },
+    {
+      "file": "DJI_0050.MP4",
+      "in": 0,
+      "at": 21,
+      "dissolveFrames": 12,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    },
+    {
+      "file": "DJI_0051.MP4",
+      "in": 0,
+      "at": 28,
+      "dissolveFrames": 0,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    },
+    {
+      "file": "DJI_0053.MP4",
+      "in": 0,
+      "at": 35,
+      "dissolveFrames": 0,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    },
+    {
+      "file": "DJI_0054.MP4",
+      "in": 0,
+      "at": 42,
+      "dissolveFrames": 12,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    },
+    {
+      "file": "DJI_0055.MP4",
+      "in": 0,
+      "at": 48,
+      "dissolveFrames": 0,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    },
+    {
+      "file": "DJI_0056.MP4",
+      "in": 0,
+      "at": 54,
+      "dissolveFrames": 15,
+      "speed": [
+        1,
+        1
+      ],
+      "grade": {
+        "contrast": 1.04,
+        "saturation": 1.05,
+        "gamma": 1
+      }
+    }
+  ]
+}
