@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="pt">
+<head>
+<meta charset="utf-8">
+<title>KTM 250 — THE RIDE</title>
+<script src="assets/gsap.min.js"></script>
+<style>
+  html, body { margin: 0; background: #101010; }
+  #ride { position: relative; width: {{width}}px; height: {{height}}px; overflow: hidden; }
+  video, #intro, #end-fade { position: absolute; inset: 0; width: 100%; height: 100%; }
+  video { object-fit: cover; }
+  #intro { z-index: 100; }
+  .title-card {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    background: radial-gradient(ellipse at center, #101010cf, #10101016);
+  }
+  h1 {
+    margin: 0; padding: 0 0 0.2em; border-bottom: 0.065em solid #ff782c;
+    color: #fff8f0; font: 800 calc({{width}}px * 0.064) Arial, sans-serif;
+    letter-spacing: 0.045em; text-shadow: 0 0.045em 0.18em #080808;
+  }
+  #end-fade { z-index: 101; pointer-events: none; }
+  #end-fade > div { width: 100%; height: 100%; background: #101010; opacity: 0; }
+</style>
+</head>
+<body>
+<main id="ride" data-composition-id="ride" data-start="0" data-duration="{{duration}}" data-width="{{width}}" data-height="{{height}}" data-fps="30">
+{{clips}}
+<section id="intro" class="clip" data-start="0" data-duration="{{titleDuration}}" data-track-index="2" data-track-kind="graphics" data-layout-allow-overlap>
+  <div class="title-card"><h1>KTM 250 — THE RIDE</h1></div>
+</section>
+<div id="end-fade" class="clip" data-start="0" data-duration="{{duration}}" data-track-index="3" data-track-kind="graphics" data-layout-allow-overlap><div></div></div>
+{{audio}}
+</main>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  {{timeline}}
+  tl.from(".title-card", { opacity: 0, duration: 0.42, ease: "power2.out" }, 0);
+  tl.from("h1", { yPercent: 13, duration: 0.75, ease: "power3.out" }, 0.15);
+  tl.to(".title-card", { opacity: 0, duration: {{titleDuration}} - {{titleExit}} - 0.04, ease: "sine.inOut" }, {{titleExit}});
+  tl.to("#end-fade > div", { opacity: 1, duration: 0.53, ease: "sine.inOut" }, {{duration}} - 0.58);
+  window.__timelines = window.__timelines || {};
+  window.__timelines.ride = tl;
+</script>
+</body>
+</html>

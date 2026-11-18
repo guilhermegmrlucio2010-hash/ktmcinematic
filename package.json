@@ -1,0 +1,22 @@
+{
+  "name": "ktmcinematic",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "prepareFilm": "node src/prepare.ts",
+    "test": "node --test test/plan.test.ts",
+    "typecheck": "tsc --noEmit",
+    "smoke": "node test/smoke.ts"
+  },
+  "dependencies": {
+    "hyperframes": "0.9.65",
+    "gsap": "3.13.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "22.19.0"
+  }
+}
