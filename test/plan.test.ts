@@ -16,8 +16,7 @@ test("nine sources fill 1800 frames with deliberate overlaps", () => {
 
 test("beats are relative to the music source and snap nearby cuts only", () => {
   const config = readConfig();
-  config.music.in = 2;
-  config.music.beats = [9.2, 16.5];
+  config.music = { file: "fixture.wav", in: 2, volume: 0.5, beats: [9.2, 16.5] };
   const shots = plan(config);
   assert.equal(shots[1].start, 216);
   assert.equal(shots[2].start, 420);
@@ -30,10 +29,8 @@ test("ramp integrates its initial and final rates over the source interval", () 
   assert.ok(Math.abs(shot.sourceDuration * 1.25 - shot.frames / 30) < 1e-9);
 });
 
-test("rejects non-ascending cuts and missing engine tracks", () => {
+test("rejects non-ascending cuts", () => {
   const config = readConfig();
   config.cuts[1].at = 0;
   assert.throws(() => plan(config), /ordem/);
-  config.engine = [];
-  assert.throws(() => plan(config), /gravação real/);
 });

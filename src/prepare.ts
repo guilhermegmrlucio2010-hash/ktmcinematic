@@ -20,8 +20,8 @@ type Cut = {
 export type Config = {
   videos: string;
   duration: number;
-  music: Audio & { beats: number[] };
-  engine: Engine[];
+  music?: Audio & { beats: number[] };
+  engine?: Engine[];
   cuts: Cut[];
 };
 
@@ -33,19 +33,21 @@ function range(value: number, min: number, max: number, label: string) {
 
 export function plan(config: Config) {
   range(config.duration, 1, 600, "Duração");
-  range(config.music.in, 0, 86400, "Entrada da música");
-  range(config.music.volume, 0, 1, "Volume da música");
-  if (config.engine.length === 0) throw new Error("Configura pelo menos uma gravação real da mota.");
+  const music = config.music;
+  if (music) {
+    range(music.in, 0, 86400, "Entrada da música");
+    range(music.volume, 0, 1, "Volume da música");
+  }
   const total = Math.round(config.duration * fps);
-  for (const engine of config.engine) {
+  for (const engine of config.engine ?? []) {
     range(engine.at, 0, seconds(total), "Posição do motor");
     range(engine.duration, 0.1, seconds(total) - engine.at, "Duração do motor");
     range(engine.in, 0, 86400, "Entrada do motor");
     range(engine.volume, 0.01, 1, "Volume do motor");
   }
-  const beats = config.music.beats.map((beat) => {
+  const beats = (music?.beats ?? []).map((beat) => {
     range(beat, 0, 86400, "Batida");
-    return Math.round((beat - config.music.in) * fps);
+    return Math.round((beat - (music?.in ?? 0)) * fps);
   }).filter((frame) => frame > 0 && frame < total);
   if (config.cuts.length === 0) throw new Error("Configura pelo menos um plano.");
   const starts = config.cuts.map((cut, index) => {
@@ -114,7 +116,10 @@ function prepare(configPath: string, output: string, preview: boolean) {
   const base = dirname(configPath);
   const width = preview ? 960 : 3840;
   const height = preview ? 540 : 2160;
-  const soundtrack = [{ ...config.music, at: 0, duration }, ...config.engine];
+  const soundtrack = [
+    ...(config.music ? [{ ...config.music, at: 0, duration }] : []),
+    ...(config.engine ?? []),
+  ];
   const audioPaths = soundtrack.map((track) => {
     const file = resolve(base, track.file);
     if (probe(file, "a:0").duration + 0.02 < track.in + track.duration) {
@@ -162,19 +167,24 @@ function prepare(configPath: string, output: string, preview: boolean) {
       '" data-track-index="' + (index % 2) + '" style="z-index:' + (index + 1) + '"></video>';
   });
 
-  const filters = soundtrack.map((track, i) => {
-    const fade = Math.min(i === 0 ? 0.7 : 0.08, track.duration / 3);
-    return "[" + i + ":a]atrim=duration=" + track.duration +
-      ",asetpts=PTS-STARTPTS,aformat=sample_rates=48000:channel_layouts=stereo,volume=" + track.volume +
-      ",afade=t=in:d=" + fade + ",afade=t=out:st=" + (track.duration - fade) + ":d=" + fade +
-      ",adelay=" + Math.round(track.at * 1000) + ":all=1[a" + i + "]";
-  });
-  filters.push(soundtrack.map((_, i) => "[a" + i + "]").join("") + "amix=inputs=" + soundtrack.length +
-    ":normalize=0:duration=first,alimiter=limit=0.89:level=0:latency=1,apad,atrim=duration=" + duration + "[mix]");
-  ffmpeg([
-    ...soundtrack.flatMap((track, i) => ["-ss", String(track.in), "-i", audioPaths[i]]),
-    "-filter_complex", filters.join(";"), "-map", "[mix]", "-c:a", "pcm_s16le", join(assets, "mix.wav"),
-  ]);
+  let audio = "";
+  if (soundtrack.length > 0) {
+    const filters = soundtrack.map((track, i) => {
+      const fade = Math.min(config.music && i === 0 ? 0.7 : 0.08, track.duration / 3);
+      return "[" + i + ":a]atrim=duration=" + track.duration +
+        ",asetpts=PTS-STARTPTS,aformat=sample_rates=48000:channel_layouts=stereo,volume=" + track.volume +
+        ",afade=t=in:d=" + fade + ",afade=t=out:st=" + (track.duration - fade) + ":d=" + fade +
+        ",adelay=" + Math.round(track.at * 1000) + ":all=1[a" + i + "]";
+    });
+    filters.push(soundtrack.map((_, i) => "[a" + i + "]").join("") + "amix=inputs=" + soundtrack.length +
+      ":normalize=0:duration=longest,alimiter=limit=0.89:level=0:latency=1,apad,atrim=duration=" + duration + "[mix]");
+    ffmpeg([
+      ...soundtrack.flatMap((track, i) => ["-ss", String(track.in), "-i", audioPaths[i]]),
+      "-filter_complex", filters.join(";"), "-map", "[mix]", "-c:a", "pcm_s16le", join(assets, "mix.wav"),
+    ]);
+    audio = '<audio id="soundtrack" class="clip" src="assets/mix.wav" data-start="0" data-duration="' +
+      duration + '" data-track-index="4"></audio>';
+  }
 
   copyFileSync(join(root, "node_modules", "gsap", "dist", "gsap.min.js"), join(assets, "gsap.min.js"));
   const titleDuration = Math.min(4.2, duration);
@@ -183,7 +193,7 @@ function prepare(configPath: string, output: string, preview: boolean) {
     seconds(cut.dissolveFrames) + "}, " + seconds(cut.start) + ");",
   ] : []).join("\n");
   const template = readFileSync(join(root, "composition.html"), "utf8");
-  const slots = { width, height, duration, titleDuration, titleExit: titleDuration * 0.73, clips: clips.join("\n"), timeline };
+  const slots = { width, height, duration, titleDuration, titleExit: titleDuration * 0.73, clips: clips.join("\n"), timeline, audio };
   writeFileSync(join(output, "index.html"), template.replace(/\{\{(\w+)\}\}/g, (_, key: keyof typeof slots) => String(slots[key])));
   console.log("Composição criada em " + join(output, "index.html"));
 }

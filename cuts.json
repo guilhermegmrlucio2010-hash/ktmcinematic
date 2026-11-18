@@ -1,21 +1,6 @@
 {
   "videos": "C:\\Users\\guilh\\Documents\\Editor-IA\\KTM-250\\videos",
   "duration": 60,
-  "music": {
-    "file": "local/music.wav",
-    "in": 0,
-    "volume": 0.55,
-    "beats": []
-  },
-  "engine": [
-    {
-      "file": "local/engine.wav",
-      "in": 0,
-      "at": 0,
-      "duration": 6,
-      "volume": 0.65
-    }
-  ],
   "cuts": [
     {
       "file": "DJI_0046.MP4",
